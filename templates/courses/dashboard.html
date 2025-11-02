@@ -1,0 +1,187 @@
+{% extends 'courses/base.html' %}
+{% load course_extras %}
+
+{% block title %}Bugungi Darslar - EduVision{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--text);
+        font-size: 1rem;
+    }
+
+    .lessons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .lesson-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border);
+    }
+
+    .lesson-card:hover {
+        box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+        transform: translateY(-4px);
+    }
+
+    .lesson-time {
+        display: inline-block;
+        background: var(--primary-light);
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .lesson-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .lesson-meta {
+        color: var(--text);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .status-attended {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-test-passed {
+        background-color: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .status-pending {
+        background-color: var(--light);
+        color: var(--text);
+    }
+
+    .lesson-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: var(--white);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: var(--white);
+        border-radius: 1rem;
+        border: 2px dashed var(--border);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        color: var(--text);
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .lessons-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">📅 Bugungi Darslar</h1>
+    <p class="page-subtitle">{{ lessons.count }} ta dars bugun kutilmoqda</p>
+</div>
+
+{% if lessons %}
+    <div class="lessons-grid">
+        {% for lesson in lessons %}
+        <div class="lesson-card">
+            <div class="lesson-time">⏰ {{ lesson.start_time|time:"H:i" }}</div>
+            <h3 class="lesson-title">{{ lesson.title }}</h3>
+            <p class="lesson-meta">📖 {{ lesson.description|truncatewords:15 }}</p>
+
+            {% with prog=progress_map|dict_get:lesson.id %}
+                {% if prog.attended %}
+                    <div class="status-badge status-attended">✅ Ishtirok etgan</div>
+                {% elif prog.test_passed %}
+                    <div class="status-badge status-test-passed">🎯 Test o'tilgan</div>
+                {% else %}
+                    <div class="status-badge status-pending">⏳ Kutilmoqda</div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="lesson-actions">
+                <a href="{% url 'courses:lesson_detail' lesson.id %}" class="btn btn-primary">
+                    Darsni ko'rish →
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-icon">😊</div>
+        <p class="empty-text">Bugun dars yo'q. Dam oling va kuchingizni yangilang!</p>
+    </div>
+{% endif %}
+{% endblock %}

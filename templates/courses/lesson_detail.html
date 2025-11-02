@@ -1,0 +1,448 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}{{ lesson.title }} - EduVision{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lesson-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .lesson-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lesson-header p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .lesson-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .videos-section {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .progress-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    .progress-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background-color: var(--light);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .video-card {
+        margin-bottom: 2rem;
+        border: 2px solid var(--border);
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .video-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    .video-card.locked {
+        opacity: 0.6;
+    }
+
+    .video-header {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        color: var(--white);
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .video-title {
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .video-badge {
+        background-color: rgba(255, 255, 255, 0.3);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .video-badge.watched {
+        background-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .video-body {
+        padding: 1.5rem;
+    }
+
+    .video-player {
+        width: 100%;
+        border-radius: 0.5rem;
+        background: #000;
+    }
+
+    .locked-message {
+        background-color: #fef3c7;
+        border-left: 4px solid var(--warning);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        color: #78350f;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .test-section {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .test-message {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .test-alert {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-left: 4px solid var(--white);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .test-result {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .test-result.success {
+        border-left: 4px solid var(--success);
+    }
+
+    .test-result.failed {
+        border-left: 4px solid var(--danger);
+    }
+
+    .btn-test {
+        background-color: var(--white);
+        color: var(--success);
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-test:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .btn-retry {
+        background-color: var(--warning);
+        color: var(--white);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-retry:hover {
+        background-color: #d97706;
+    }
+
+    @media (max-width: 968px) {
+        .lesson-content {
+            grid-template-columns: 1fr;
+        }
+
+        .lesson-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .video-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .lesson-header {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lesson-header">
+    <h1>📚 {{ lesson.title }}</h1>
+    <p>{{ lesson.description }}</p>
+</div>
+
+<div class="lesson-content">
+    <div class="videos-section">
+        <!-- Test Result Alert -->
+        {% if progress.test_passed %}
+            <div class="test-result success">
+                <strong>✅ Test muvaffaqiyatli topshirildi!</strong><br>
+                Ball: <strong>{{ progress.test_score|floatformat:0 }}%</strong>
+                {% if progress.attended %}<br><strong>🎉 Siz darsda ishtirok etdingiz!</strong>{% endif %}
+            </div>
+        {% elif progress.test_score is not none and not progress.test_passed %}
+            <div class="test-result failed">
+                <strong>❌ Test muammoli!</strong><br>
+                Ball: <strong>{{ progress.test_score|floatformat:0 }}%</strong> (Minimum 60% kerak)<br>
+                <a href="{% url 'courses:test_page' lesson.id %}" class="btn-retry">🔄 Qayta urini</a>
+            </div>
+        {% endif %}
+
+        <!-- Lesson File Download -->
+        {% if lesson.file %}
+            <div style="margin-bottom: 2rem; padding: 1rem; background-color: var(--light); border-radius: 0.5rem;">
+                <a href="{{ lesson.file.url }}" download class="btn btn-primary" style="text-decoration: none;">
+                    📥 Lesson faylini yuklab olish
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Videos -->
+        <div id="videos-area">
+            {% for video in videos %}
+            <div class="video-card {% if video.id not in unlocked %}locked{% endif %}" id="video-card-{{ video.id }}" data-video-id="{{ video.id }}" data-order="{{ forloop.counter0 }}">
+                <div class="video-header">
+                    <div class="video-title">
+                        <span>🎬</span>
+                        <span>{{ forloop.counter }}. {{ video.title }}</span>
+                    </div>
+                    {% if video.id in watched_ids %}
+                        <div class="video-badge watched">✅ Ko'rildi</div>
+                    {% endif %}
+                </div>
+                <div class="video-body">
+                    {% if video.id in unlocked %}
+                        <video 
+                            controls 
+                            controlsList="nodownload noremoteplayback" 
+                            oncontextmenu="return false;" 
+                            disablePictureInPicture 
+                            width="100%"
+                            data-video-id="{{ video.id }}"
+                            class="lesson-video video-player">
+                            <source src="{% url 'courses:secure_video' video.id %}" type="video/mp4">
+                            Brauzeringiz video ko'rsatishni qo'llab-quvvatlamaydi.
+                        </video>
+                    {% else %}
+                        <div class="locked-message">
+                            🔒 Avvalgi videoni to'liq tomosha qiling
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Test Button Area -->
+        <div id="test-button-area" style="margin-top: 2rem;">
+            {% if progress.test_passed %}
+                <div style="padding: 1rem; background-color: #d1fae5; border-radius: 0.5rem; color: #065f46;">
+                    ✅ Siz testni allaqachon topshirdingiz!
+                </div>
+            {% else %}
+                {% if can_take_test %}
+                    <a href="{% url 'courses:test_page' lesson.id %}" class="btn btn-success" style="padding: 1rem; background-color: #d1fae5; border-left: 4px solid #065f46; border-radius: 0.5rem; color: #065f46; text-decoration: none;">
+                        🎯 Testni boshlash
+                    </a>
+                {% else %}
+                    <div style="padding: 1rem; background-color: #fef3c7; border-left: 4px solid var(--warning); border-radius: 0.5rem; color: #78350f;">
+                        ⏳ Barcha videolarni ko'rib chiqsangiz test ochiladi.
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Progress Card -->
+        <div class="progress-card">
+            <div class="progress-title">📊 Progres</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {% widthratio watched_ids|length videos|length 100 %}%"></div>
+            </div>
+            <div class="progress-text">
+                <strong>{{ watched_ids|length }}/{{ videos|length }}</strong> video ko'rildi
+            </div>
+        </div>
+
+        <!-- Videos List -->
+        <div class="progress-card">
+            <div class="progress-title">📹 Videolar Ro'yxati</div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                {% for video in videos %}
+                <div style="padding: 0.75rem; background-color: {% if video.id in watched_ids %}#d1fae5{% elif video.id in unlocked %}var(--light){% else %}#fee2e2{% endif %}; border-radius: 0.5rem; font-size: 0.9rem; color: {% if video.id in watched_ids %}#065f46{% elif video.id in unlocked %}var(--text){% else %}#991b1b{% endif %};">
+                    <span>{{ forloop.counter }}.</span>
+                    {% if video.id in watched_ids %}✅{% elif video.id in unlocked %}🎬{% else %}🔒{% endif %}
+                    {{ video.title|truncatewords:3 }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+function attachHandlers() {
+    document.querySelectorAll('#videos-area video').forEach(video => {
+        if (video.dataset.attached) return;
+        video.dataset.attached = '1';
+
+        video.addEventListener('ended', function() {
+            const vid = this.getAttribute('data-video-id');
+            fetch(`/video/${vid}/watched/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': csrftoken, 'Accept': 'application/json'}
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log("[v0] Video marked as watched:", vid);
+                
+                // Mark with badge
+                const card = document.querySelector('#video-card-' + vid);
+                if (card.querySelector('.video-badge') === null) {
+                    card.querySelector('.video-header').insertAdjacentHTML('beforeend', '<div class="video-badge watched">✅ Ko\'rildi</div>');
+                }
+
+                // Unlock next video
+                const order = parseInt(card.getAttribute('data-order'));
+                const nextCard = document.querySelector('#videos-area [data-order="' + (order + 1) + '"]');
+                if (nextCard) {
+                    nextCard.classList.remove('locked');
+                    const lockedMsg = nextCard.querySelector('.locked-message');
+                    if (lockedMsg) {
+                        const videoEl = document.createElement('video');
+                        videoEl.setAttribute('controls', '');
+                        videoEl.setAttribute('controlsList', 'nodownload noremoteplayback');
+                        videoEl.setAttribute('oncontextmenu', 'return false;');
+                        videoEl.setAttribute('disablePictureInPicture', '');
+                        videoEl.setAttribute('width', '100%');
+                        videoEl.setAttribute('data-video-id', nextCard.getAttribute('data-video-id'));
+                        videoEl.className = 'lesson-video video-player';
+                        const src = document.createElement('source');
+                        src.src = `/video/${nextCard.getAttribute('data-video-id')}/stream/`;
+                        src.type = 'video/mp4';
+                        videoEl.appendChild(src);
+                        lockedMsg.replaceWith(videoEl);
+                        attachHandlers();
+                    }
+                }
+
+                // Update sidebar
+                updateSidebar();
+
+                // Check if all videos watched
+                const total = document.querySelectorAll('#videos-area video').length;
+                const watched = document.querySelectorAll('#videos-area .video-badge.watched').length;
+                if (watched === total) {
+                    showTestButton();
+                }
+            })
+            .catch(e => console.error("[v0] Error:", e));
+        });
+    });
+}
+
+function updateSidebar() {
+    location.reload();
+}
+
+function showTestButton() {
+    const testBtn = document.querySelector('#test-button-area');
+    if (testBtn && !testBtn.querySelector('a')) {
+        testBtn.innerHTML = `<a href="{% url 'courses:test_page' lesson.id %}" class="btn btn-primary" style="width: 100%; text-align: center; padding: 1rem;">🎯 Testni boshlash</a>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', attachHandlers);
+</script>
+{% endblock %}
