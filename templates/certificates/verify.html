@@ -1,0 +1,10 @@
+{% if valid %}
+  <h1 style="color:green">Sertifikat haqiqiy!</h1>
+  <p><strong>Talaba:</strong> {{ student_name }}</p>
+  <p><strong>Kurs:</strong> {{ cert.course.title }}</p>
+  <p><strong>Baho:</strong> {{ cert.test_score }}%</p>
+  <p><strong>Berilgan sana:</strong> {{ cert.issued_at|date:"d.m.Y" }}</p>
+  <a href="{{ cert.pdf_file.url }}" target="_blank">PDF yuklab olish</a>
+{% else %}
+  <h1 style="color:red">Bunday sertifikat topilmadi!</h1>
+{% endif %}

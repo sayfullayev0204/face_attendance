@@ -99,12 +99,71 @@
             font-size: 1.5rem;
         }
     }
+    /* Oldin bor CSS + yangi qism */
+    .week-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .week-nav button, .week-nav a {
+        background: var(--white);
+        border: 1px solid var(--light);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--dark);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .week-nav button:hover, .week-nav a:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .current-week {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+
+    .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        color: var(--dark);
+    }
+
+    .day-date {
+        font-size: 0.85rem;
+        color: var(--text);
+        font-weight: normal;
+    }
+    .today-highlight {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+        border-left: 4px solid var(--success) !important;
+    }
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="schedule-header">
-    <h1 class="schedule-title">📅 Haftalik Jadval</h1>
+    <div class="week-nav">
+        <a href="?week={{ prev_week }}">← Oldingi hafta</a>
+        <div class="current-week">📅 {{ week_range }}</div>
+        <a href="?week={{ next_week }}">Keyingi hafta →</a>
+    </div>
+
+    <h1 class="schedule-title">Haftalik Jadval</h1>
     <p class="schedule-subtitle">🎓 {{ group.title }}</p>
 </div>
 
@@ -113,11 +172,12 @@
         ⚠️ {{ error }}
     </div>
 {% else %}
-    <div class="schedule-grid">
+    <div class="schedule-grid" style="margin-bottom: 30px;">
         {% for day_data in schedule %}
             <div class="day-card">
-                <div class="day-name">
-                    📆 {{ day_data.day_name }}
+                <div class="day-header {% if day_data.date == today_date %}today-highlight{% endif %}">
+                    <div class="day-name">📆 {{ day_data.day_name }}</div>
+                    <div class="day-date">{{ day_data.date }}</div>
                 </div>
                 {% if day_data.items %}
                     {% for item in day_data.items %}

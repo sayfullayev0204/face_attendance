@@ -3,7 +3,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'CHANGE_ME'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['phoenix-rapid-factually.ngrok-free.app','*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

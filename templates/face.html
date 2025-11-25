@@ -5,26 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yuz Markaz Nazorati - Ekranga Qarang</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; }
-        #video { width: 640px; height: 480px; border: 2px solid #333; margin: 20px auto; }
-        #canvas { display: none; } /* MediaPipe uchun */
-        #status { margin: 10px; font-size: 18px; color: #333; white-space: pre-wrap; }
-        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
-        #debug { font-size: 12px; color: #666; margin-top: 10px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background: #000;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        #status {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            min-height: 60px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            white-space: pre-wrap;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #debug {
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            white-space: pre-wrap;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #startBtn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #startBtn:hover:not(:disabled) {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        #stopBtn {
+            background: #f44336;
+            color: white;
+        }
+
+        #stopBtn:hover:not(:disabled) {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Mobil optimallashtirish */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5rem; }
+            p { font-size: 0.95rem; }
+            #status { font-size: 0.9rem; padding: 10px; }
+            button { padding: 12px 20px; font-size: 1rem; }
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h1>Yuz Markaz Nazorati Tizimi</h1>
-    <p>Yuzingizni markazda ushlang! 5 soniya markazda bo'lmasa yoki qaramasangiz, ogohlantirish keladi.</p>
-    
-    <video id="video" autoplay muted playsinline></video>
-    <canvas id="canvas"></canvas>
-    
-    <div id="status">Kamerani ishga tushiring...</div>
-    <div id="debug"></div>
-    
-    <button id="startBtn">Kamerani Boshlash</button>
-    <button id="stopBtn" disabled>Xonani To'xtatish</button>
+    <div class="container">
+        <h1>Yuz Markaz Nazorati</h1>
+        <p>Yuzingizni markazda ushlang! 5 soniya markazda bo'lmasangiz yoki qaramasangiz — ogohlantirish keladi.</p>
+
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+
+        <div id="status">Kamerani ishga tushiring...</div>
+        <div id="debug"></div>
+
+        <div class="buttons">
+            <button id="startBtn">Kamerani Boshlash</button>
+            <button id="stopBtn" disabled>Xonani To'xtatish</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 | MediaPipe + HTML5 | Mobil mos
+    </div>
 
     <!-- MediaPipe CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -43,13 +189,12 @@
 
         let camera;
         let faceMesh;
-        let notCenteredTime = 0; // Yangi: Markazda bo'lmaslik uchun alohida timer
+        let notCenteredTime = 0;
         let isRunning = false;
-        const LOOKING_THRESHOLD = 20; // Ko'z burchagi
-        const CENTER_TOLERANCE = 0.15; // 15% tolerance (oshirdim)
-        const ALERT_TIME = 5; // Soniyalarda
+        const LOOKING_THRESHOLD = 20;
+        const CENTER_TOLERANCE = 0.15;
+        const ALERT_TIME = 5;
 
-        // Ko'z vektorini hisoblash (oldin kabi)
         function getEyeVector(landmarks, eyeType) {
             const eyeIndices = eyeType === 'left' ? 
                 [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246] : 
@@ -75,9 +220,8 @@
             return { angle: Math.abs(angle) };
         }
 
-        // Yuz markazini tekshirish (burun uchi orqali)
         function isFaceCentered(landmarks) {
-            const noseTip = landmarks[1]; // Burun uchi (MediaPipe indeksi 1)
+            const noseTip = landmarks[1];
             const centerX = 0.5;
             const centerY = 0.5;
             const dx = Math.abs(noseTip.x - centerX);
@@ -85,7 +229,6 @@
             return dx < CENTER_TOLERANCE && dy < CENTER_TOLERANCE;
         }
 
-        // MediaPipe natijalarini qayta ishlash
         function onResults(results) {
             ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -93,86 +236,82 @@
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks[0]) {
                 const landmarks = results.multiFaceLandmarks[0];
-                
-                // Gaze va markaz tekshiruvi
                 const leftEye = getEyeVector(landmarks, 'left');
                 const rightEye = getEyeVector(landmarks, 'right');
                 const avgAngle = (leftEye.angle + rightEye.angle) / 2;
                 const isGazeLooking = avgAngle < LOOKING_THRESHOLD;
                 const isCentered = isFaceCentered(landmarks);
-                const noseTip = landmarks[1]; // Debug uchun
+                const noseTip = landmarks[1];
 
-                // Debug ma'lumotlari
-                debug.innerHTML = `Chap ko'z: ${leftEye.angle.toFixed(1)}° | O'ng ko'z: ${rightEye.angle.toFixed(1)}° | O'rtacha: ${avgAngle.toFixed(1)}°\nBurun pozitsiyasi: X=${(noseTip.x*100).toFixed(0)}% | Y=${(noseTip.y*100).toFixed(0)}% | Markazda: ${isCentered ? 'Ha' : 'Yo\'q'}`;
+                debug.innerHTML = `Chap: ${leftEye.angle.toFixed(1)}° | O'ng: ${rightEye.angle.toFixed(1)}° | O'rt: ${avgAngle.toFixed(1)}°\nBurun: X=${(noseTip.x*100).toFixed(0)}% Y=${(noseTip.y*100).toFixed(0)}% | Markaz: ${isCentered ? 'Ha' : 'Yo\'q'}`;
 
-                // Markazda bo'lmasa timer ishga tushirish
                 if (!isCentered) {
-                    notCenteredTime += 1 / 30; // ~30 FPS
+                    notCenteredTime += 1 / 30;
                 } else {
-                    notCenteredTime = 0; // Reset, agar markazga qaytsa
+                    notCenteredTime = 0;
                 }
 
                 if (isGazeLooking && isCentered) {
-                    status.innerHTML = `✅ Yuz markazda va qarab turibsiz! (Burun: ${ (noseTip.x*100).toFixed(0) }%, ${ (noseTip.y*100).toFixed(0) }%)\nDavom eting.`;
-                    status.style.color = 'green';
+                    status.innerHTML = `Yuz markazda va qarab turibsiz!\nBurun: ${(noseTip.x*100).toFixed(0)}%, ${(noseTip.y*100).toFixed(0)}%`;
+                    status.style.background = 'rgba(76, 175, 80, 0.3)';
+                    status.style.color = '#fff';
                 } else {
                     let reason = '';
-                    if (!isGazeLooking) reason += 'Ko\'zlar boshqa tomonga. ';
-                    if (!isCentered) reason += 'Yuzni markazga yaqinlashtiring (hozir: ' + (noseTip.x*100).toFixed(0) + '%, ' + (noseTip.y*100).toFixed(0) + '%).';
-                    status.innerHTML = `⚠️ Markazda bo\'lmang! Vaqt: ${notCenteredTime.toFixed(1)}s\nSabab: ${reason}\n(O'rtacha burchak: ${avgAngle.toFixed(1)}°)\nDebug: Burun X/Y yuqorida.`;
-                    status.style.color = 'red';
+                    if (!isGazeLooking) reason += 'Ko\'z boshqa tomonga. ';
+                    if (!isCentered) reason += `Yuz markazda emas (${(noseTip.x*100).toFixed(0)}%, ${(noseTip.y*100).toFixed(0)}%).`;
 
-                    // 5 soniya o'tgach xabar (markaz + gaze)
+                    status.innerHTML = `Markazda emassiz! Vaqt: ${notCenteredTime.toFixed(1)}s\n${reason}`;
+                    status.style.background = 'rgba(244, 67, 54, 0.3)';
+                    status.style.color = '#fff';
+
                     if (notCenteredTime >= ALERT_TIME) {
                         notifyUser(`Yuz markazda emas! ${notCenteredTime.toFixed(1)}s o'tdi.`);
                         notCenteredTime = 0;
                     }
                 }
             } else {
-                status.innerHTML = 'Yuz topilmadi! Yuzingizni ko\'rsating va yaxshi yorug\'likda bo\'ling.';
-                status.style.color = 'orange';
+                status.innerHTML = 'Yuz topilmadi! Yuzingizni ko\'rsating.';
+                status.style.background = 'rgba(255, 152, 0, 0.3)';
+                status.style.color = '#fff';
                 debug.innerHTML = '';
                 notCenteredTime = 0;
             }
             ctx.restore();
         }
 
-        // Ogohlantirish bildirishnomasi (xabar matnini o'zgartirdim)
         function notifyUser(message = 'Ekranga qarang!') {
             if (Notification.permission === 'granted') {
-                new Notification('Yuz Markaz Ogohlantirish', {
+                new Notification('Yuz Ogohlantirish', {
                     body: message,
                     icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjRkYwMDAwIi8+Cjwvc3ZnPgo='
                 });
             } else if (Notification.permission !== 'denied') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') notifyUser(message);
+                Notification.requestPermission().then(perm => {
+                    if (perm === 'granted') notifyUser(message);
                 });
             } else {
                 alert(`⚠️ ${message}`);
             }
         }
 
-        // Kamerani boshlash
         startBtn.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { width: 640, height: 480, facingMode: 'user' } 
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
                 });
                 video.srcObject = stream;
 
-                await new Promise(resolve => video.onloadedmetadata = () => {
-                    video.play();
-                    resolve();
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        resolve();
+                    };
                 });
 
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
                 camera = new Camera(video, {
-                    onFrame: async () => {
-                        await faceMesh.send({ image: video });
-                    },
+                    onFrame: async () => await faceMesh.send({ image: video }),
                     width: video.videoWidth,
                     height: video.videoHeight
                 });
@@ -192,34 +331,33 @@
                 isRunning = true;
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
-                status.innerHTML = 'Tizim ishlamoqda... Yuzingizni markazga qo\'ying! (Debug quyida)';
-                status.style.color = 'blue';
+                status.innerHTML = 'Tizim ishga tushdi... Yuzni markazga qo\'ying!';
+                status.style.background = 'rgba(33, 150, 243, 0.3)';
                 notCenteredTime = 0;
             } catch (err) {
-                console.error('Kamera xatosi:', err);
-                status.innerHTML = `Xato: Kamera ruxsati bering: ${err.message}`;
-                status.style.color = 'red';
+                console.error(err);
+                status.innerHTML = `Xato: Kamera ruxsati bering!\n${err.message}`;
+                status.style.background = 'rgba(244, 67, 54, 0.4)';
             }
         });
 
-        // To'xtatish
         stopBtn.addEventListener('click', () => {
             if (camera) camera.stop();
             if (video.srcObject) {
-                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject.getTracks().forEach(t => t.stop());
             }
             isRunning = false;
             startBtn.disabled = false;
             stopBtn.disabled = true;
             status.innerHTML = 'To\'xtatildi. Qayta boshlash uchun tugmani bosing.';
-            status.style.color = 'gray';
+            status.style.background = 'rgba(158, 158, 158, 0.3)';
             debug.innerHTML = '';
             notCenteredTime = 0;
         });
 
         // Notification ruxsati
         if (Notification.permission === 'default') {
-            Notification.requestPermission();
+            setTimeout(() => Notification.requestPermission(), 2000);
         }
     </script>
 </body>

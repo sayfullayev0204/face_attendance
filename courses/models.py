@@ -121,3 +121,29 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.group.title} - {self.lesson.title} ({self.get_day_of_week_display()})"
+
+# models.py (oxiriga qo'shing)
+
+from django.utils import timezone
+import uuid
+
+class Certificate(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='certificates')
+    test_score = models.FloatField()  # testdan olgan bali (masalan, 85.5)
+    issued_at = models.DateTimeField(default=timezone.now)
+    certificate_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    pdf_file = models.FileField(upload_to='certificates/', null=True, blank=True)
+
+    class Meta:
+        unique_together = ('student', 'course')
+        verbose_name = "Sertifikat"
+        verbose_name_plural = "Sertifikatlar"
+
+    def __str__(self):
+        return f"{self.student.get_full_name() or self.student.username} - {self.course.title}"
+
+    def get_verification_url(self):
+        # Sertifikatni tekshirish uchun maxsus URL
+        from django.urls import reverse
+        return f"https://phoenix-rapid-factually.ngrok-free.app{reverse('verify_certificate', kwargs={'uuid': self.certificate_id})}"

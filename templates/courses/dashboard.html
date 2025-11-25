@@ -153,7 +153,7 @@
 </div>
 
 {% if lessons %}
-    <div class="lessons-grid">
+    <div class="lessons-grid" style="margin-bottom: 30px;">
         {% for lesson in lessons %}
         <div class="lesson-card">
             <div class="lesson-time">⏰ {{ lesson.start_time|time:"H:i" }}</div>

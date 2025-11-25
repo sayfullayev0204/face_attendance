@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        @page { size: A4 landscape; margin: 0; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: "Times New Roman", serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cert {
+            width: 95%;
+            height: 95%;
+            background: white;
+            border: 20px solid gold;
+            border-image: url('https://i.imgur.com/8z3z3Yk.png') 30 round; /* ixtiyoriy border */
+            padding: 60px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            position: relative;
+            background: url('https://i.imgur.com/9jZ7p8L.jpg') center/cover no-repeat;
+        }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 60px; color: #b8860b; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 28px; color: #333; margin: 10px 0; }
+        .student { font-size: 58px; color: #000; font-weight: bold; text-align: center; margin: 50px 0; text-transform: uppercase; }
+        .course { font-size: 40px; color: #333; text-align: center; margin: 30px 0; }
+        .details { text-align: center; font-size: 28px; color: #333; }
+        .score { font-size: 36px; color: #006400; font-weight: bold; }
+        .footer { position: absolute; bottom: 80px; left: 0; right: 0; text-align: center; }
+        .qr { position: absolute; bottom: 80px; right: 100px; }
+        .id { position: absolute; bottom: 80px; left: 100px; font-size: 18px; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="cert">
+        <div class="header">
+            <h1>SERTIFIKAT</h1>
+            <p>Muvaffaqiyatli yakunlaganligi uchun</p>
+        </div>
+        <div class="student">{{ student_name }}</div>
+        <div class="course">"{{ course_title }}"</div>
+        <div class="details">
+            <p>O'rtacha bahosi: <span class="score">{{ score }}%</span></p>
+            <p>{{ issued_date }} sanasida berildi</p>
+        </div>
+        <div class="footer">
+            <p>Rasmiy elektron sertifikat</p>
+        </div>
+        <div class="id">ID: {{ certificate_id }}</div>
+        <div class="qr">
+            <img src="data:image/png;base64,{{ qr_code|safe }}" width="140" height="140"/>
+        </div>
+    </div>
+</body>
+</html>

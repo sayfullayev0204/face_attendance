@@ -199,6 +199,74 @@
                 font-size: 1.2rem;
             }
         }
+        /* Desktop menu - faqat katta ekranlarda */
+.desktop-menu {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .desktop-menu {
+        display: none !important;
+    }
+}
+
+/* Mobile Footer Menu */
+.mobile-footer-menu {
+    display: none;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer-menu-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    flex: 1;
+    padding: 0.5rem;
+    transition: all 0.2s;
+}
+
+.footer-menu-item span {
+    font-size: 1.25rem;
+}
+
+.footer-menu-item:hover,
+.footer-menu-item:active {
+    color: var(--primary);
+    background-color: rgba(99, 102, 241, 0.05);
+    border-radius: 0.5rem;
+}
+
+/* Mobil rejimda footer ko‘rinsin */
+@media (max-width: 768px) {
+    .mobile-footer-menu {
+        display: block;
+    }
+
+    /* Content pastga tushmasin */
+    body {
+        padding-bottom: 70px;
+    }
+}
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -207,9 +275,9 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="{% url 'courses:dashboard' %}" class="navbar-brand">
-                📚 EduVision
+                EduVision
             </a>
-            <ul class="navbar-menu">
+            <ul class="navbar-menu desktop-menu">
                 <li><a href="{% url 'courses:dashboard' %}">Bosh sahifa</a></li>
                 <li><a href="{% url 'courses:schedule' %}">Jadval</a></li>
                 <li><a href="{% url 'courses:profile' %}">Profil</a></li>
@@ -243,6 +311,21 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Mobile Footer Menu -->
+    <footer class="mobile-footer-menu">
+        <div class="footer-menu-container">
+            <a href="{% url 'courses:dashboard' %}" class="footer-menu-item">
+                <span>🏠</span> Bosh sahifa
+            </a>
+            <a href="{% url 'courses:schedule' %}" class="footer-menu-item">
+                <span>📅</span> Jadval
+            </a>
+            <a href="{% url 'courses:profile' %}" class="footer-menu-item">
+                <span>👤</span> Profil
+            </a>
+        </div>
+    </footer>
 
     <script>
         // Auto-close alerts after 5 seconds
